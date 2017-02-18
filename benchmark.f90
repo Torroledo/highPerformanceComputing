@@ -1,9 +1,9 @@
-program plate
+program benchmark
 
 	implicit none 
 	
 	integer, parameter :: n = 100
-	integer :: i,j, iter, half, R, max_iter = 3000
+	integer :: i,j, iter, half, R, max_iter = n*n
 	
 	logical :: interior(n,n)
 	real :: grid(n,n)
@@ -14,7 +14,7 @@ program plate
 	R = .8 * half
 	
 	! Grid initialization 	
-	forall(i=1:n,j=1:n) x(i,j) = i 
+	forall(i=1:n,j=1:n) y(i,j) = i 
 	forall(i=1:n,j=1:n) x(i,j) = j
 	
 	interior = .true. 
@@ -34,14 +34,13 @@ program plate
 	! Iteration 
 	do iter = 1,max_iter 
 		where (interior)
-			grid = (1/4) * 	(cshift(grid, dim=1, shift=1) + &
+			grid = .25 * 	(cshift(grid, dim=1, shift=1) + &
 							cshift(grid, dim=1, shift=-1) + &
 							cshift(grid, dim=2, shift=1) + &
 							cshift(grid, dim=2, shift=-1))
 		end where			 
 		write(*,*) iter
 	end do 
-	
 	! Write Final Data
 	open(unit = 1, file = 'benchData.txt')
 	write(1,*) (grid(i,:), i=1,n)
